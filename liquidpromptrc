@@ -120,3 +120,4 @@ LP_ENABLE_SSH_COLORS=0
 LP_DISABLED_VCS_PATH=""
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:
+. /usr/bin/liquidprompt

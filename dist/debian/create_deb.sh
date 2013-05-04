@@ -8,13 +8,14 @@ if [ ! -d ./liquidprompt/usr/bin/ ]
 then
 	mkdir -p ./liquidprompt/usr/bin/
 fi
-if [ ! -d ./liquidprompt/etc/ ]
+if [ ! -d ./liquidprompt/etc/profile.d/ ]
 then
-	mkdir -p ./liquidprompt/etc/
+mkdir -p ./liquidprompt/etc/profile.d/
 fi
 cp ../../liquidprompt ./liquidprompt/usr/bin/liquidprompt
-cp ../../liquidpromptrc ./liquidprompt/etc/liquidpromptrc
+cp ../../liquidpromptrc ./liquidprompt/etc/profile.d/liquidpromptrc.sh
 chmod a+x ./liquidprompt/usr/bin/liquidprompt
+chmod a+x ./liquidprompt/etc/profile.d/liquidpromptrc.sh
 
 echo "Building liquidprompt.deb..."
 dpkg-deb -b liquidprompt
