@@ -14,12 +14,12 @@ if [[ "$(locale -k LC_CTYPE | sed -n 's/^charmap="\(.*\)"/\1/p')" == *"UTF-8"* ]
     LP_MARK_ADAPTER="⏚"     # displayed when plugged
     LP_MARK_LOAD="⌂"        # in front of the load
     LP_MARK_PROXY="↥"       # indicate a proxy in use
-    LP_MARK_HG="☿"   # prompt mark in hg repositories
-    LP_MARK_SVN="‡"  # prompt mark in svn repositories
+    LP_MARK_HG="☿"   		# prompt mark in hg repositories
+    LP_MARK_SVN="‡"  		# prompt mark in svn repositories
     LP_MARK_GIT="±"         # prompt mark in git repositories
-    LP_MARK_FOSSIL="⌘"         # prompt mark in fossil repositories
-    LP_MARK_UNTRACKED="*"        # if git has untracked files
-    LP_MARK_STASH="+"        # if git has stashs
+    LP_MARK_FOSSIL="⌘"		# prompt mark in fossil repositories
+    LP_MARK_UNTRACKED="*"	# if git has untracked files
+    LP_MARK_STASH="+"       # if git has stashs
     LP_MARK_SHORTEN_PATH="…" # prompt mark in shortened paths
 else
     # If charset is anything else, fallback to ASCII chars
