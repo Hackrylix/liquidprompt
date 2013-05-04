@@ -1,7 +1,7 @@
 
 ################################################################################
 # LIQUID PROMPT
-# An intelligent and non intrusive prompt for bash and zsh
+# An intelligent and non intrusive prompt for bash 
 ################################################################################
 
 
@@ -43,10 +43,7 @@
 # Poil              <poil@quake.fr>               # speed improvements
 # Thomas Debesse    <thomas.debesse@gmail.com>    # Fix columns use.
 # Yann 'Ze' Richard <ze@nbox.org>                 # Do not fail on missing commands.
-
-# Hackrylux <hackrylix@gmail.com>                 # customization and optimization
-
-# See the README.md file for a summary of features.
+# Hackrylix <hackrylix@gmail.com>                 # customization and optimization
 
 # Check for recent enough version of bash.
 if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
@@ -63,13 +60,6 @@ if test -n "$BASH_VERSION" -a -n "$PS1" -a -n "$TERM" ; then
     _LP_USER_SYMBOL="\u"
     _LP_HOST_SYMBOL="\h"
     _LP_TIME_SYMBOL="\\\\t"
-elif test -n "$ZSH_VERSION" ; then
-    _LP_WORKING_SHELL=zsh
-    _LP_OPEN_ESC="%{"
-    _LP_CLOSE_ESC="%}"
-    _LP_USER_SYMBOL="%n"
-    _LP_HOST_SYMBOL="%m"
-    _LP_TIME_SYMBOL="%*"
 else
     echo "liquidprompt: shell not supported" >&2
     return
@@ -160,15 +150,14 @@ _lp_source_config()
 
     unset ti_sgr0 ti_bold ti_setaf
 
-
-    # Default values (globals)
-    LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-100}
+	# Default values (globals)
+    LP_BATTERY_THRESHOLD=${LP_BATTERY_THRESHOLD:-75}
     LP_LOAD_THRESHOLD=${LP_LOAD_THRESHOLD:-60}
     LP_PATH_LENGTH=${LP_PATH_LENGTH:-35}
     LP_PATH_KEEP=${LP_PATH_KEEP:-2}
     LP_HOSTNAME_ALWAYS=${LP_HOSTNAME_ALWAYS:-0}
-    LP_USER_ALWAYS=${LP_USER_ALWAYS:1}
-    LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:1}
+    LP_USER_ALWAYS=${LP_USER_ALWAYS:-1}
+    LP_PERCENTS_ALWAYS=${LP_PERCENTS_ALWAYS:-1}
     LP_PS1=${LP_PS1:-""}
     LP_PS1_PREFIX=${LP_PS1_PREFIX:-""}
     LP_TITLE_OPEN=${LP_TITLE_OPEN:-"\e]0;"}
@@ -176,23 +165,23 @@ _lp_source_config()
     LP_SCREEN_TITLE_OPEN=${LP_SCREEN_TITLE_OPEN:-"\033k"}
     LP_SCREEN_TITLE_CLOSE=${LP_SCREEN_TITLE_CLOSE:-"\033\134"}
 
-    LP_ENABLE_PERM=${LP_ENABLE_PERM:1}
+    LP_ENABLE_PERM=${LP_ENABLE_PERM:-1}
     LP_ENABLE_SHORTEN_PATH=${LP_ENABLE_SHORTEN_PATH:-1}
-    LP_ENABLE_PROXY=${LP_ENABLE_PROXY:1}
-    LP_ENABLE_JOBS=${LP_ENABLE_JOBS:1}
-    LP_ENABLE_LOAD=${LP_ENABLE_LOAD:1}
-    LP_ENABLE_BATT=${LP_ENABLE_BATT:1}
-    LP_ENABLE_GIT=${LP_ENABLE_GIT:1}
+    LP_ENABLE_PROXY=${LP_ENABLE_PROXY:-1}
+    LP_ENABLE_JOBS=${LP_ENABLE_JOBS:-1}
+    LP_ENABLE_LOAD=${LP_ENABLE_LOAD:-1}
+    LP_ENABLE_BATT=${LP_ENABLE_BATT:-1}
+    LP_ENABLE_GIT=${LP_ENABLE_GIT:-1}
     LP_ENABLE_SVN=${LP_ENABLE_SVN:-1}
     LP_ENABLE_FOSSIL=${LP_ENABLE_FOSSIL:-1}
     LP_ENABLE_HG=${LP_ENABLE_HG:-1}
     LP_ENABLE_BZR=${LP_ENABLE_BZR:-1}
     LP_ENABLE_TIME=${LP_ENABLE_TIME:-0}
-    LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:1}
+    LP_ENABLE_VIRTUALENV=${LP_ENABLE_VIRTUALENV:-1}
     LP_ENABLE_VCS_ROOT=${LP_ENABLE_VCS_ROOT:-0}
-    LP_ENABLE_TITLE=${LP_ENABLE_TITLE:1}
-    LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:1}
-    LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:1}
+    LP_ENABLE_TITLE=${LP_ENABLE_TITLE:-0}
+    LP_ENABLE_SCREEN_TITLE=${LP_ENABLE_SCREEN_TITLE:-0}
+    LP_ENABLE_SSH_COLORS=${LP_ENABLE_SSH_COLORS:-0}
     LP_DISABLED_VCS_PATH=${LP_DISABLED_VCS_PATH:-""}
 
     LP_MARK_DEFAULT=${LP_MARK_DEFAULT:-""}
@@ -438,20 +427,15 @@ _lp_shorten_path()
     fi
     # the character that will replace the part of the path that is masked
     local mask="$LP_MARK_SHORTEN_PATH"
-    # index of the directory to keep from the root (starts at 0 whith bash, 1 with zsh)
+    # index of the directory to keep from the root (starts at 0 whith bash)
     local keep=$((LP_PATH_KEEP-1))
-    if [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-       keep=$LP_PATH_KEEP
-    fi
-
+    
     local p="${PWD/$HOME/~}"
     local len="${#p}"
 
     local max_len=$((${COLUMNS:-80}*$LP_PATH_LENGTH/100))
     local mask_len="${#mask}"
     local slashes=0
-
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
         if [[ "$len" -gt "$max_len" ]]
         then
             # finds all the '/' in
@@ -511,13 +495,7 @@ _lp_shorten_path()
         else
             echo "$p"
         fi
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        if [[ "$len" -gt "$max_len" ]]; then
-            echo "%-${keep}~%${max_len}<${mask}<%~%<<"
-        else
-            echo "%~"
-        fi
-    fi
+   
 }
 
 # In bash shell, PROMPT_DIRTRIM is the number of directory to keep at the end
@@ -1091,12 +1069,9 @@ _lp_battery_color()
                 # for debugging purpose
                 ret="${ret}${LP_COLORMAP_0}"
             fi
-
-            if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-                ret="${ret}${bat}%"
-            elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-                ret="${ret}${bat}%%"
-            fi
+            
+            ret="${ret}${bat}%"
+          
         fi # LP_PERCENTS_ALWAYS
         echo -ne "${ret}${NO_COL}"
     fi # ret
@@ -1154,11 +1129,7 @@ _lp_load_color()
         ret="$ret${LP_MARK_LOAD}"
 
         if [[ "$LP_PERCENTS_ALWAYS" -eq "1" ]]; then
-            if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-                ret="${ret}$load%"
-            elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-                ret="${ret}$load%%"
-            fi
+            ret="${ret}$load%"
         fi
         echo -ne "${ret}${NO_COL}"
     fi
@@ -1176,7 +1147,6 @@ _lp_as_text()
     local pst=$(echo $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g")
 
     # Remove escape sequences
-    # FIXME check the zsh compatibility
     # pst=$(echo $pst | sed "s,\\\\\\[\|\\\\\\],,g")
     local op=$(printf "%q" "$_LP_OPEN_ESC")
     local cl=$(printf "%q" "$_LP_CLOSE_ESC")
@@ -1223,8 +1193,6 @@ _lp_smart_mark()
     local mark
     if [[ -n "$LP_MARK_DEFAULT" ]]; then
         mark=$LP_MARK_DEFAULT
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        mark="%(!.#.%%)"
     else
         mark="\\\$"
     fi
@@ -1466,20 +1434,11 @@ prompt_on()
     # if liquidprompt has not been already set
     if [[ -z "$LP_LIQUIDPROMPT" ]] ; then
         LP_OLD_PS1="$PS1"
-        if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-            LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
-        elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-            LP_OLD_PROMPT_COMMAND="$precmd"
-        fi
+        LP_OLD_PROMPT_COMMAND="$PROMPT_COMMAND"
     fi
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        PROMPT_COMMAND=_lp_set_prompt
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        function precmd {
-            _lp_set_prompt
-        }
-    fi
-
+    
+    PROMPT_COMMAND=_lp_set_prompt
+    
     # Keep in mind that LP has been sourced
     # (to avoid recursive prompt command).
     LP_LIQUIDPROMPT=1
@@ -1489,22 +1448,14 @@ prompt_on()
 prompt_off()
 {
     PS1=$LP_OLD_PS1
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        precmd=$LP_OLD_PROMPT_COMMAND
-    fi
+	PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
 }
 
 # Use an empty prompt: just the \$ mark
 prompt_OFF()
 {
     PS1="\$ "
-    if [[ "$_LP_WORKING_SHELL" == "bash" ]]; then
-        PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
-    elif [[ "$_LP_WORKING_SHELL" == "zsh" ]]; then
-        precmd=$LP_OLD_PROMPT_COMMAND
-    fi
+    PROMPT_COMMAND=$LP_OLD_PROMPT_COMMAND
 }
 
 # By default, sourcing liquidprompt.bash will activate the liquid prompt
